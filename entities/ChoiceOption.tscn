@@ -1,0 +1,150 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://entities/ChoiceOption.gd" type="Script" id=1]
+
+[node name="ChoiceOption" type="VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator" type="HSeparator" parent="."]
+margin_right = 179.0
+margin_bottom = 4.0
+
+[node name="Name" type="HBoxContainer" parent="."]
+margin_top = 8.0
+margin_right = 179.0
+margin_bottom = 32.0
+
+[node name="Label" type="Label" parent="Name"]
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 19.0
+text = "Name:"
+
+[node name="LineEdit" type="LineEdit" parent="Name"]
+margin_left = 46.0
+margin_right = 179.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+text = "Next"
+expand_to_text_length = true
+
+[node name="Removable" type="HBoxContainer" parent="."]
+margin_top = 36.0
+margin_right = 179.0
+margin_bottom = 60.0
+
+[node name="Label" type="Label" parent="Removable"]
+margin_top = 5.0
+margin_right = 75.0
+margin_bottom = 19.0
+text = "Removable:"
+
+[node name="LineEdit" type="CheckBox" parent="Removable"]
+margin_left = 79.0
+margin_right = 103.0
+margin_bottom = 24.0
+
+[node name="NextNode" type="HBoxContainer" parent="."]
+margin_top = 64.0
+margin_right = 179.0
+margin_bottom = 88.0
+
+[node name="Label" type="Label" parent="NextNode"]
+margin_top = 5.0
+margin_right = 72.0
+margin_bottom = 19.0
+text = "Next Node:"
+
+[node name="LineEdit" type="LineEdit" parent="NextNode"]
+margin_left = 76.0
+margin_right = 179.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+expand_to_text_length = true
+
+[node name="Conditional" type="HBoxContainer" parent="."]
+margin_top = 92.0
+margin_right = 179.0
+margin_bottom = 116.0
+
+[node name="Label" type="Label" parent="Conditional"]
+margin_top = 5.0
+margin_right = 76.0
+margin_bottom = 19.0
+text = "Conditional:"
+
+[node name="LineEdit" type="CheckBox" parent="Conditional"]
+margin_left = 80.0
+margin_right = 104.0
+margin_bottom = 24.0
+
+[node name="ConditionalVariablesButton" type="HBoxContainer" parent="."]
+margin_top = 120.0
+margin_right = 179.0
+margin_bottom = 140.0
+
+[node name="Label" type="Label" parent="ConditionalVariablesButton"]
+margin_top = 3.0
+margin_right = 138.0
+margin_bottom = 17.0
+text = "Conditional Variables:"
+
+[node name="Button" type="Button" parent="ConditionalVariablesButton"]
+margin_left = 142.0
+margin_right = 179.0
+margin_bottom = 20.0
+text = "Add"
+
+[node name="ConditionalVariables" type="VBoxContainer" parent="."]
+margin_top = 144.0
+margin_right = 179.0
+margin_bottom = 144.0
+
+[node name="OnExitSetVariablesButton" type="HBoxContainer" parent="."]
+margin_top = 148.0
+margin_right = 179.0
+margin_bottom = 168.0
+
+[node name="Label" type="Label" parent="OnExitSetVariablesButton"]
+margin_top = 3.0
+margin_right = 108.0
+margin_bottom = 17.0
+text = "On Exit Variables"
+
+[node name="Button" type="Button" parent="OnExitSetVariablesButton"]
+margin_left = 112.0
+margin_right = 149.0
+margin_bottom = 20.0
+text = "Add"
+
+[node name="OnExitSetVariables" type="VBoxContainer" parent="."]
+margin_top = 172.0
+margin_right = 179.0
+margin_bottom = 172.0
+
+[node name="OnExitFunctionsButton" type="HBoxContainer" parent="."]
+margin_top = 176.0
+margin_right = 179.0
+margin_bottom = 196.0
+
+[node name="Label" type="Label" parent="OnExitFunctionsButton"]
+margin_top = 3.0
+margin_right = 112.0
+margin_bottom = 17.0
+text = "On Exit Functions"
+
+[node name="Button" type="Button" parent="OnExitFunctionsButton"]
+margin_left = 116.0
+margin_right = 153.0
+margin_bottom = 20.0
+text = "Add"
+
+[node name="OnExitFunctions" type="VBoxContainer" parent="."]
+margin_top = 200.0
+margin_right = 179.0
+margin_bottom = 200.0

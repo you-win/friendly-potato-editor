@@ -1,0 +1,184 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://screens/MainScreen.gd" type="Script" id=1]
+
+[node name="MainScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BaseBackground" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginBackground" type="ColorRect" parent="MarginContainer"]
+margin_right = 1580.0
+margin_bottom = 880.0
+color = Color( 0.184314, 0.184314, 0.184314, 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MarginBackground"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ToolBar" type="VBoxContainer" parent="MarginContainer/MarginBackground/HBoxContainer"]
+margin_right = 137.0
+margin_bottom = 880.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TitleContainer" type="HBoxContainer" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_right = 137.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/TitleContainer"]
+margin_top = 5.0
+margin_right = 32.0
+margin_bottom = 19.0
+text = "Title:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/TitleContainer"]
+margin_left = 36.0
+margin_right = 137.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="InitialNodeContainer" type="HBoxContainer" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 28.0
+margin_right = 137.0
+margin_bottom = 52.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/InitialNodeContainer"]
+margin_top = 5.0
+margin_right = 75.0
+margin_bottom = 19.0
+text = "Inital Node:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/InitialNodeContainer"]
+margin_left = 79.0
+margin_right = 137.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="AddNodeButton" type="Button" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 56.0
+margin_right = 137.0
+margin_bottom = 76.0
+text = "Add Node"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SaveButton" type="Button" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 80.0
+margin_right = 137.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+text = "Save"
+
+[node name="LoadButton" type="Button" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 104.0
+margin_right = 137.0
+margin_bottom = 124.0
+size_flags_horizontal = 3
+text = "Load"
+
+[node name="AddVariableButton" type="HBoxContainer" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 128.0
+margin_right = 137.0
+margin_bottom = 148.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/AddVariableButton"]
+margin_top = 3.0
+margin_right = 62.0
+margin_bottom = 17.0
+text = "Variables:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/AddVariableButton"]
+margin_left = 66.0
+margin_right = 137.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Add"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 152.0
+margin_right = 137.0
+margin_bottom = 856.0
+size_flags_vertical = 3
+
+[node name="VariablesContainer" type="VBoxContainer" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar/ScrollContainer"]
+margin_bottom = 704.0
+size_flags_vertical = 3
+
+[node name="QuitButton" type="Button" parent="MarginContainer/MarginBackground/HBoxContainer/ToolBar"]
+margin_top = 860.0
+margin_right = 137.0
+margin_bottom = 880.0
+size_flags_horizontal = 3
+text = "Quit"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EditorContainer" type="Control" parent="MarginContainer/MarginBackground/HBoxContainer"]
+margin_left = 141.0
+margin_right = 1580.0
+margin_bottom = 880.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/MarginBackground/HBoxContainer/EditorContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.407843, 0.407843, 0.407843, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GraphEdit" type="GraphEdit" parent="MarginContainer/MarginBackground/HBoxContainer/EditorContainer/ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+scroll_offset = Vector2( -863, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

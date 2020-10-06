@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://entities/Function.gd" type="Script" id=1]
+
+[node name="Function" type="VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator" type="HSeparator" parent="."]
+margin_right = 121.0
+margin_bottom = 4.0
+
+[node name="Function" type="HBoxContainer" parent="."]
+margin_top = 8.0
+margin_right = 121.0
+margin_bottom = 32.0
+
+[node name="Label" type="Label" parent="Function"]
+margin_top = 5.0
+margin_right = 59.0
+margin_bottom = 19.0
+text = "Function:"
+
+[node name="LineEdit" type="LineEdit" parent="Function"]
+margin_left = 63.0
+margin_right = 121.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+expand_to_text_length = true
+
+[node name="Button" type="Button" parent="."]
+margin_top = 36.0
+margin_right = 121.0
+margin_bottom = 56.0
+text = "Add parameter"
+
+[node name="Params" type="VBoxContainer" parent="."]
+margin_top = 60.0
+margin_right = 121.0
+margin_bottom = 60.0

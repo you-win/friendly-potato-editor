@@ -1,0 +1,48 @@
+[gd_scene format=2]
+
+[node name="ConditionalVariable" type="VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator" type="HSeparator" parent="."]
+margin_right = 123.0
+margin_bottom = 4.0
+
+[node name="Operator" type="HBoxContainer" parent="."]
+margin_top = 8.0
+margin_right = 123.0
+margin_bottom = 32.0
+
+[node name="Label" type="Label" parent="Operator"]
+margin_top = 5.0
+margin_right = 61.0
+margin_bottom = 19.0
+text = "Operator:"
+
+[node name="LineEdit" type="LineEdit" parent="Operator"]
+margin_left = 65.0
+margin_right = 123.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+expand_to_text_length = true
+
+[node name="Value" type="HBoxContainer" parent="."]
+margin_top = 36.0
+margin_right = 123.0
+margin_bottom = 60.0
+
+[node name="Label" type="Label" parent="Value"]
+margin_top = 5.0
+margin_right = 39.0
+margin_bottom = 19.0
+text = "Value:"
+
+[node name="LineEdit" type="LineEdit" parent="Value"]
+margin_left = 43.0
+margin_right = 123.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+expand_to_text_length = true
