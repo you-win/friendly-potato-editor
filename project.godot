@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Dialogue Editor"
+config/name="Friendly Potato"
 run/main_scene="res://screens/MainScreen.tscn"
 config/icon="res://assets/icon.png"
 
