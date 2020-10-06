@@ -12,27 +12,10 @@ __meta__ = {
 margin_right = 104.0
 margin_bottom = 4.0
 
-[node name="Name" type="HBoxContainer" parent="."]
+[node name="Type" type="HBoxContainer" parent="."]
 margin_top = 8.0
 margin_right = 104.0
 margin_bottom = 32.0
-
-[node name="Label" type="Label" parent="Name"]
-margin_top = 5.0
-margin_right = 42.0
-margin_bottom = 19.0
-text = "Name:"
-
-[node name="LineEdit" type="LineEdit" parent="Name"]
-margin_left = 46.0
-margin_right = 104.0
-margin_bottom = 24.0
-size_flags_horizontal = 3
-
-[node name="Type" type="HBoxContainer" parent="."]
-margin_top = 36.0
-margin_right = 104.0
-margin_bottom = 60.0
 
 [node name="Label" type="Label" parent="Type"]
 margin_top = 5.0
@@ -47,9 +30,9 @@ margin_bottom = 24.0
 size_flags_horizontal = 3
 
 [node name="Value" type="HBoxContainer" parent="."]
-margin_top = 64.0
+margin_top = 36.0
 margin_right = 104.0
-margin_bottom = 88.0
+margin_bottom = 60.0
 
 [node name="Label" type="Label" parent="Value"]
 margin_top = 5.0

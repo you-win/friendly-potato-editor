@@ -1,19 +1,19 @@
 [gd_scene format=2]
 
 [node name="GlobalVariable" type="VBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="HSeparator" type="HSeparator" parent="."]
-margin_right = 104.0
+margin_right = 1600.0
 margin_bottom = 4.0
 
 [node name="Name" type="HBoxContainer" parent="."]
 margin_top = 8.0
-margin_right = 104.0
+margin_right = 1600.0
 margin_bottom = 32.0
 
 [node name="Label" type="Label" parent="Name"]
@@ -24,12 +24,13 @@ text = "Name:"
 
 [node name="LineEdit" type="LineEdit" parent="Name"]
 margin_left = 46.0
-margin_right = 104.0
+margin_right = 1600.0
 margin_bottom = 24.0
+size_flags_horizontal = 3
 
 [node name="Type" type="HBoxContainer" parent="."]
 margin_top = 36.0
-margin_right = 104.0
+margin_right = 1600.0
 margin_bottom = 60.0
 
 [node name="Label" type="Label" parent="Type"]
@@ -40,12 +41,13 @@ text = "Type:"
 
 [node name="LineEdit" type="LineEdit" parent="Type"]
 margin_left = 38.0
-margin_right = 96.0
+margin_right = 1600.0
 margin_bottom = 24.0
+size_flags_horizontal = 3
 
 [node name="Value" type="HBoxContainer" parent="."]
 margin_top = 64.0
-margin_right = 104.0
+margin_right = 1600.0
 margin_bottom = 88.0
 
 [node name="Label" type="Label" parent="Value"]
@@ -56,5 +58,6 @@ text = "Value"
 
 [node name="LineEdit" type="LineEdit" parent="Value"]
 margin_left = 39.0
-margin_right = 97.0
+margin_right = 1600.0
 margin_bottom = 24.0
+size_flags_horizontal = 3

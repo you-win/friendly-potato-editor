@@ -44,7 +44,7 @@ margin_right = 75.0
 margin_bottom = 19.0
 text = "Removable:"
 
-[node name="LineEdit" type="CheckBox" parent="Removable"]
+[node name="CheckBox" type="CheckBox" parent="Removable"]
 margin_left = 79.0
 margin_right = 103.0
 margin_bottom = 24.0
@@ -78,7 +78,7 @@ margin_right = 76.0
 margin_bottom = 19.0
 text = "Conditional:"
 
-[node name="LineEdit" type="CheckBox" parent="Conditional"]
+[node name="CheckBox" type="CheckBox" parent="Conditional"]
 margin_left = 80.0
 margin_right = 104.0
 margin_bottom = 24.0

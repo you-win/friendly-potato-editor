@@ -159,7 +159,7 @@ margin_right = 74.0
 margin_bottom = 19.0
 text = "Should End:"
 
-[node name="LineEdit" type="CheckBox" parent="ShouldEnd"]
+[node name="CheckBox" type="CheckBox" parent="ShouldEnd"]
 margin_left = 78.0
 margin_right = 102.0
 margin_bottom = 24.0
