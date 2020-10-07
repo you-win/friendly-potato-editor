@@ -9,6 +9,7 @@ const VARIABLE_TYPES = {
 
 var dialogue_node: Resource = preload("res://entities/DialogueNode.tscn")
 var global_variable: Resource = preload("res://entities/GlobalVariable.tscn")
+var save_file_window: Resource = preload("res://entities/SaveFileWindow.tscn")
 
 onready var editor: GraphEdit = $MarginContainer/HBoxContainer/EditorContainer/GraphEdit
 
@@ -57,9 +58,9 @@ func _on_save_button_pressed() -> void:
 	var result: Dictionary = _parse_global_options()
 	result["dialogue"] = _parse_dialogue_nodes()
 	
-	print_debug(result)
-	
-	# TODO add fs dialogue save box
+	var save_file_window_instance: FileDialog = save_file_window.instance()
+	save_file_window_instance.save_data = result
+	add_child(save_file_window_instance)
 
 func _on_load_button_pressed() -> void:
 	# TODO add fs dialogue picker
