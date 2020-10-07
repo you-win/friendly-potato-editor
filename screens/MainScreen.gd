@@ -9,7 +9,9 @@ const VARIABLE_TYPES = {
 
 var dialogue_node: Resource = preload("res://entities/DialogueNode.tscn")
 var global_variable: Resource = preload("res://entities/GlobalVariable.tscn")
+
 var save_file_picker: Resource = preload("res://entities/SaveFilePicker.tscn")
+var load_file_picker: Resource = preload("res://entities/LoadFilePicker.tscn")
 
 onready var editor: GraphEdit = $MarginContainer/HBoxContainer/EditorContainer/GraphEdit
 
@@ -63,8 +65,16 @@ func _on_save_button_pressed() -> void:
 	add_child(save_file_picker_instance)
 
 func _on_load_button_pressed() -> void:
-	# TODO add fs dialogue picker
-	pass
+	var load_file_picker_instance: FileDialog = load_file_picker.instance()
+	add_child(load_file_picker_instance)
+	
+	yield(load_file_picker_instance,"file_selected")
+	
+	var save_data: Dictionary = load_file_picker_instance.save_data
+	load_file_picker_instance.queue_free()
+	
+	_load_global_options(save_data)
+	_load_dialogue_nodes(save_data["dialogue"])
 
 func _on_add_variable_button_pressed() -> void:
 	var global_variable_instance: VBoxContainer = global_variable.instance()
@@ -184,6 +194,43 @@ func _parse_enter_exit_functions(functions: Array) -> Dictionary:
 		result[f.get_node("Function").get_node("LineEdit").text] = params
 	
 	return result
+
+func _load_global_options(options: Dictionary) -> void:
+	$MarginContainer/HBoxContainer/ToolBar/TitleContainer/LineEdit.text = options["name"]
+	$MarginContainer/HBoxContainer/ToolBar/InitialNodeContainer/LineEdit.text = options["initial_dialogue_node"]
+	
+	for v_key in options["variables"].keys():
+		var global_variable_instance = global_variable.instance()
+		global_variable_instance.get_node("Name/LineEdit").text = v_key
+		global_variable_instance.get_node("Type/LineEdit").text = options["variables"][v_key]["type"]
+		global_variable_instance.get_node("Value/LineEdit").text = options["variables"][v_key]["value"]
+		
+		$MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.add_child(global_variable_instance)
+
+func _load_dialogue_nodes(node_dictionary: Dictionary) -> void:
+	for n_key in node_dictionary.keys():
+		var d_instance = dialogue_node.instance()
+		d_instance.get_node("Name/LineEdit").text = n_key
+		d_instance.get_node("Text/LineEdit").text = node_dictionary[n_key]["node_text"]
+		d_instance.get_node("ShouldEnd/CheckBox").pressed = node_dictionary[n_key]["should_end"]
+		for c in node_dictionary[n_key]["choices"]:
+			d_instance.get_node("Choices").add_child(_create_choice(c))
+		# TODO create enter vars
+		# TODO create enter functions
+		
+		editor.add_child(d_instance)
+
+# TODO not done
+func _create_choice(choice_dictionary: Dictionary) -> VBoxContainer:
+	var choice_option = load("res://entities/ChoiceOption.tscn").instance()
+	
+	return choice_option
+
+# TODO not done, need to consider variable type
+func _create_enter_exit_variable(variable_name: String, value) -> VBoxContainer:
+	var variable = load("res://entities/SetVariable.tscn").instance()
+	
+	return variable
 
 func _convert_variable_to_type(value, type: String):
 	match type:

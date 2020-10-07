@@ -1,12 +1,13 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://entities/SaveFilePicker.gd" type="Script" id=1]
+[ext_resource path="res://entities/LoadFilePicker.gd" type="Script" id=1]
 
-[node name="SaveFilePicker" type="FileDialog"]
+[node name="LoadFilePicker" type="FileDialog"]
 margin_right = 315.0
 margin_bottom = 130.0
-popup_exclusive = true
+window_title = "Open a File"
 resizable = true
+mode = 0
 access = 2
 current_dir = "/Users/theaz/dev/dialogue-editor"
 current_path = "/Users/theaz/dev/dialogue-editor/"
