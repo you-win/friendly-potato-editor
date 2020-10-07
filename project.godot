@@ -19,6 +19,10 @@ config/name="Friendly Potato Editor"
 run/main_scene="res://screens/MainScreen.tscn"
 config/icon="res://assets/icon.png"
 
+[debug]
+
+gdscript/warnings/return_value_discarded=false
+
 [display]
 
 window/size/width=1600

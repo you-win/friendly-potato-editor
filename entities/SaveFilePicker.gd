@@ -1,5 +1,7 @@
 extends FileDialog
 
+var save_confirmation: Resource = preload("res://entities/SaveConfirmation.tscn")
+
 var save_data: Dictionary
 
 ###############################################################################
@@ -13,6 +15,8 @@ func _ready() -> void:
 	self.set_global_position(screen_middle)
 	self.rect_size = screen_middle
 	popup_centered(screen_middle)
+	
+	self.connect("popup_hide", self, "_on_popup_hide")
 
 ###############################################################################
 # Connections                                                                 #
@@ -24,6 +28,15 @@ func _on_file_selected(path: String) -> void:
 	
 	save_file.store_line(to_json(save_data))
 	save_file.close()
+	
+	var save_confirmation_instance: AcceptDialog = save_confirmation.instance()
+	save_confirmation_instance.dialog_text = "File saved at " + path
+	get_parent().add_child(save_confirmation_instance)
+	
+	self.queue_free()
+
+func _on_popup_hide() -> void:
+	queue_free()
 
 ###############################################################################
 # Private functions                                                           #
