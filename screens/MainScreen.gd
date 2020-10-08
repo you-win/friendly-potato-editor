@@ -22,12 +22,16 @@ onready var editor: GraphEdit = $MarginContainer/HBoxContainer/EditorContainer/G
 ###############################################################################
 
 func _ready() -> void:
+	# Drag and drop file loading
+	get_tree().connect("files_dropped", self, "_on_files_dropped")
+	
 	# Add node by button
 	$MarginContainer/HBoxContainer/ToolBar/AddNodeButton.connect("pressed", self, "_on_add_node_button_pressed")
 	
 	# Filesystem
 	$MarginContainer/HBoxContainer/ToolBar/SaveButton.connect("pressed", self, "_on_save_button_pressed")
-	$MarginContainer/HBoxContainer/ToolBar/LoadButton.connect("pressed", self, "_on_load_button_pressed")
+	$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/AppendButton.connect("pressed", self, "_on_append_button_pressed")
+	$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/LoadButton.connect("pressed", self, "_on_load_button_pressed")
 	
 	# Global variables
 	$MarginContainer/HBoxContainer/ToolBar/AddVariableButton/Button.connect("pressed", self, "_on_add_variable_button_pressed")
@@ -57,6 +61,9 @@ func _input(event: InputEvent) -> void:
 # Connections                                                                 #
 ###############################################################################
 
+func _on_files_dropped(files: PoolStringArray, screen: int) -> void:
+	_load_from_drag_and_drop(files[0])
+
 func _on_add_node_button_pressed() -> void:
 	var dialogue_node_instance: GraphNode = dialogue_node.instance()
 	editor.add_child(dialogue_node_instance)
@@ -65,32 +72,42 @@ func _on_save_button_pressed() -> void:
 	var result: Dictionary = _parse_global_options()
 	result["dialogue"] = _parse_dialogue_nodes()
 	
-	var save_file_picker_instance: FileDialog = save_file_picker.instance()
-	save_file_picker_instance.save_data = result
-	add_child(save_file_picker_instance)
+	if OS.get_name() != "HTML5":
+		var save_file_picker_instance: FileDialog = save_file_picker.instance()
+		save_file_picker_instance.save_data = result
+		add_child(save_file_picker_instance)
+	else:
+		var save_file: File = File.new()
+		save_file.open("res://" + result["name"] + ".json", File.WRITE)
+		
+		save_file.store_line(to_json(result))
+		save_file.close()
+		
+		var js_snippet = """
+			var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent('%s');
+			var downloadAnchorNode = document.createElement('a');
+			downloadAnchorNode.setAttribute('href',     dataStr);
+			downloadAnchorNode.setAttribute('download','%s.json');
+			document.body.appendChild(downloadAnchorNode); // required for firefox
+			downloadAnchorNode.click();
+			downloadAnchorNode.remove();
+		""" % [to_json(result), result["name"]]
+		
+		JavaScript.eval(js_snippet)
 
 func _on_load_button_pressed() -> void:
-	var load_file_picker_instance: FileDialog = load_file_picker.instance()
-	add_child(load_file_picker_instance)
-	
-	yield(load_file_picker_instance,"file_selected")
-	
-	var save_data: Dictionary = load_file_picker_instance.save_data
-	load_file_picker_instance.queue_free()
-	
-	_load_global_options(save_data)
-	_load_dialogue_nodes(save_data["dialogue"])
+	_clear()
+	_load_file()
+
+func _on_append_button_pressed() -> void:
+	_load_file()
 
 func _on_add_variable_button_pressed() -> void:
 	var global_variable_instance: VBoxContainer = global_variable.instance()
 	$MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.add_child(global_variable_instance)
 
 func _on_clear_button_pressed() -> void:
-	for v_child in $MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.get_children():
-		v_child.queue_free()
-	for e_child in editor.get_children():
-		if e_child is GraphNode:
-			e_child.queue_free()
+	_clear()
 
 # TODO debug only, add a popup dialogue later?
 func _on_quit_button_pressed() -> void:
@@ -311,6 +328,36 @@ func _get_type_of_variable(value) -> String:
 		_:
 			printerr("Unrecognized type for value: " + value)
 			return VARIABLE_TYPES.STRING
+
+func _load_file() -> void:
+	var load_file_picker_instance: FileDialog = load_file_picker.instance()
+	add_child(load_file_picker_instance)
+	
+	yield(load_file_picker_instance,"file_selected")
+	
+	var save_data: Dictionary = load_file_picker_instance.save_data
+	load_file_picker_instance.queue_free()
+	
+	_load_global_options(save_data)
+	_load_dialogue_nodes(save_data["dialogue"])
+
+func _load_from_drag_and_drop(path: String) -> void:
+	var save_file: File = File.new()
+	save_file.open(path, File.READ)
+	
+	var save_data = parse_json(save_file.get_line())
+	
+	save_file.close()
+	
+	_load_global_options(save_data)
+	_load_dialogue_nodes(save_data["dialogue"])
+
+func _clear() -> void:
+	for v_child in $MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.get_children():
+		v_child.queue_free()
+	for e_child in editor.get_children():
+		if e_child is GraphNode:
+			e_child.queue_free()
 
 ###############################################################################
 # Public functions                                                            #

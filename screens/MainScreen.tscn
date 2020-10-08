@@ -107,22 +107,28 @@ text = "Save"
 [node name="LoadButtonContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
 margin_top = 104.0
 margin_right = 137.0
-margin_bottom = 104.0
+margin_bottom = 124.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LoadButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 108.0
+[node name="AppendButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer"]
+margin_right = 66.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Append"
+
+[node name="LoadButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer"]
+margin_left = 70.0
 margin_right = 137.0
-margin_bottom = 128.0
+margin_bottom = 20.0
 size_flags_horizontal = 3
 text = "Load"
 
 [node name="AddVariableButton" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 132.0
+margin_top = 128.0
 margin_right = 137.0
-margin_bottom = 152.0
+margin_bottom = 148.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -144,14 +150,14 @@ size_flags_horizontal = 3
 text = "Add"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 156.0
+margin_top = 152.0
 margin_right = 137.0
 margin_bottom = 824.0
 size_flags_vertical = 3
 
 [node name="VariablesContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar/ScrollContainer"]
 margin_right = 137.0
-margin_bottom = 668.0
+margin_bottom = 672.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
