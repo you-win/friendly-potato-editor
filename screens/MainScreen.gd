@@ -1,11 +1,13 @@
 extends Control
 
 const VARIABLE_TYPES = {
-	"INT": "INT",
 	"FLOAT": "FLOAT",
 	"STRING": "STRING",
 	"BOOL": "BOOL"
 }
+
+const NODE_SPACING: Vector2 = Vector2(300, 545)
+const MAX_SPAWN_ROW_COUNT: int = 9
 
 var dialogue_node: Resource = preload("res://entities/DialogueNode.tscn")
 var global_variable: Resource = preload("res://entities/GlobalVariable.tscn")
@@ -208,40 +210,97 @@ func _load_global_options(options: Dictionary) -> void:
 		$MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.add_child(global_variable_instance)
 
 func _load_dialogue_nodes(node_dictionary: Dictionary) -> void:
+	var current_spawn_position: Vector2 = Vector2.ZERO
+	var current_row_count: int = 0
 	for n_key in node_dictionary.keys():
 		var d_instance = dialogue_node.instance()
+		d_instance.name = n_key
 		d_instance.get_node("Name/LineEdit").text = n_key
-		d_instance.get_node("Text/LineEdit").text = node_dictionary[n_key]["node_text"]
+		d_instance.get_node("Text/TextEdit").text = node_dictionary[n_key]["node_text"]
 		d_instance.get_node("ShouldEnd/CheckBox").pressed = node_dictionary[n_key]["should_end"]
 		for c in node_dictionary[n_key]["choices"]:
 			d_instance.get_node("Choices").add_child(_create_choice(c))
-		# TODO create enter vars
-		# TODO create enter functions
+		for ev_key in node_dictionary[n_key]["on_enter_set_variables"].keys():
+			d_instance.get_node("OnEnterSetVariables").add_child(_create_enter_exit_variable(ev_key, node_dictionary[n_key]["on_enter_set_variables"][ev_key]))
+		for ef_key in node_dictionary[n_key]["on_enter_functions"].keys():
+			d_instance.get_node("OnEnterFunctions").add_child(_create_enter_exit_function(ef_key, node_dictionary[n_key]["on_enter_functions"][ef_key]))
+		
+		if current_row_count > MAX_SPAWN_ROW_COUNT:
+			current_spawn_position.y += NODE_SPACING.y
+			current_spawn_position.x = 0
+			current_row_count = 0
+		
+		d_instance.offset = current_spawn_position
+		current_spawn_position.x += NODE_SPACING.x
+		current_row_count += 1
 		
 		editor.add_child(d_instance)
 
-# TODO not done
 func _create_choice(choice_dictionary: Dictionary) -> VBoxContainer:
 	var choice_option = load("res://entities/ChoiceOption.tscn").instance()
+	choice_option.get_node("Name/LineEdit").text = choice_dictionary["choice_name"]
+	choice_option.get_node("Removable/CheckBox").pressed = choice_dictionary["removable"]
+	choice_option.get_node("NextNode/LineEdit").text = choice_dictionary["next_node"]
+	choice_option.get_node("Conditional/CheckBox").pressed = choice_dictionary["conditional"]
+	for cv_key in choice_dictionary["conditional_variables"].keys():
+		choice_option.get_node("ConditionalVariables").add_child(_create_conditional_variable(cv_key, choice_dictionary["conditional_variables"][cv_key]))
+	for exit_var in choice_dictionary["on_exit_set_variables"].keys():
+		choice_option.get_node("OnExitSetVariables").add_child(_create_enter_exit_variable(exit_var, choice_dictionary["on_exit_set_variables"][exit_var]))
+	for exit_func in choice_dictionary["on_exit_functions"].keys():
+		choice_option.get_node("OnExitFunctions").add_child(_create_enter_exit_function(exit_func, choice_dictionary["on_exit_functions"][exit_func]))
 	
 	return choice_option
 
-# TODO not done, need to consider variable type
+func _create_conditional_variable(var_name: String, variable_dictionary: Dictionary) -> VBoxContainer:
+	var conditional_variable = load("res://entities/ConditionalVariable.tscn").instance()
+	conditional_variable.get_node("Name/LineEdit").text = var_name
+	conditional_variable.get_node("Operator/LineEdit").text = variable_dictionary["operator"]
+	conditional_variable.get_node("Value/LineEdit").text = variable_dictionary["value"]
+	
+	return conditional_variable
+
 func _create_enter_exit_variable(variable_name: String, value) -> VBoxContainer:
 	var variable = load("res://entities/SetVariable.tscn").instance()
+	variable.get_node("Name/LineEdit").text = variable_name
+	variable.get_node("Value/LineEdit").text = str(value)
 	
 	return variable
 
+func _create_enter_exit_function(function_name: String, params: Array) -> VBoxContainer:
+	var function = load("res://entities/Function.tscn").instance()
+	function.get_node("Function/LineEdit").text = function_name
+	for p in params:
+		function.get_node("Params").add_child(_create_function_parameter(p))
+	
+	return function
+
+func _create_function_parameter(param_value) -> VBoxContainer:
+	var function_parameter = load("res://entities/FunctionParameter.tscn").instance()
+	function_parameter.get_node("Type/LineEdit").text = _get_type_of_variable(param_value)
+	function_parameter.get_node("Value/LineEdit").text = param_value
+	
+	return function_parameter
+
 func _convert_variable_to_type(value, type: String):
 	match type:
-		VARIABLE_TYPES.INT:
-			return int(value)
 		VARIABLE_TYPES.FLOAT:
 			return float(value)
 		VARIABLE_TYPES.STRING:
 			return str(value)
 		VARIABLE_TYPES.BOOL:
 			return bool(value)
+
+func _get_type_of_variable(value) -> String:
+	match typeof(value):
+		TYPE_BOOL:
+			return VARIABLE_TYPES.BOOL
+		TYPE_REAL:
+			return VARIABLE_TYPES.FLOAT
+		TYPE_STRING:
+			return VARIABLE_TYPES.STRING
+		_:
+			printerr("Unrecognized type for value: " + value)
+			return VARIABLE_TYPES.STRING
 
 ###############################################################################
 # Public functions                                                            #
