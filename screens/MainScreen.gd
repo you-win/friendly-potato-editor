@@ -32,6 +32,9 @@ func _ready() -> void:
 	# Global variables
 	$MarginContainer/HBoxContainer/ToolBar/AddVariableButton/Button.connect("pressed", self, "_on_add_variable_button_pressed")
 	
+	# Clear all work
+	$MarginContainer/HBoxContainer/ToolBar/ClearButton.connect("pressed", self, "_on_clear_button_pressed")
+	
 	# Quit
 	$MarginContainer/HBoxContainer/ToolBar/QuitButton.connect("pressed", self, "_on_quit_button_pressed")
 
@@ -81,6 +84,13 @@ func _on_load_button_pressed() -> void:
 func _on_add_variable_button_pressed() -> void:
 	var global_variable_instance: VBoxContainer = global_variable.instance()
 	$MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.add_child(global_variable_instance)
+
+func _on_clear_button_pressed() -> void:
+	for v_child in $MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.get_children():
+		v_child.queue_free()
+	for e_child in editor.get_children():
+		if e_child is GraphNode:
+			e_child.queue_free()
 
 # TODO debug only, add a popup dialogue later?
 func _on_quit_button_pressed() -> void:
