@@ -30,8 +30,12 @@ func _ready() -> void:
 	
 	# Filesystem
 	$MarginContainer/HBoxContainer/ToolBar/SaveButton.connect("pressed", self, "_on_save_button_pressed")
-	$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/AppendButton.connect("pressed", self, "_on_append_button_pressed")
-	$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/LoadButton.connect("pressed", self, "_on_load_button_pressed")
+	if OS.get_name() != "HTML5":
+		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/AppendButton.connect("pressed", self, "_on_append_button_pressed")
+		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/LoadButton.connect("pressed", self, "_on_load_button_pressed")
+	else:
+		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/AppendButton.queue_free()
+		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/LoadButton.queue_free()
 	
 	# Global variables
 	$MarginContainer/HBoxContainer/ToolBar/AddVariableButton/Button.connect("pressed", self, "_on_add_variable_button_pressed")
@@ -40,7 +44,10 @@ func _ready() -> void:
 	$MarginContainer/HBoxContainer/ToolBar/ClearButton.connect("pressed", self, "_on_clear_button_pressed")
 	
 	# Quit
-	$MarginContainer/HBoxContainer/ToolBar/QuitButton.connect("pressed", self, "_on_quit_button_pressed")
+	if OS.get_name() != "HTML5":
+		$MarginContainer/HBoxContainer/ToolBar/QuitButton.connect("pressed", self, "_on_quit_button_pressed")
+	else:
+		$MarginContainer/HBoxContainer/ToolBar/QuitButton.queue_free()
 
 func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed("control"):
