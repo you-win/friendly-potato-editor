@@ -8,6 +8,7 @@ const VARIABLE_TYPES = {
 
 const NODE_SPACING: Vector2 = Vector2(300, 545)
 const MAX_SPAWN_ROW_COUNT: int = 9
+const WEB_OS_NAME: String = "HTML5"
 
 var DialogueNode: Resource = preload("res://entities/DialogueNode.tscn")
 var GlobalVariable: Resource = preload("res://entities/GlobalVariable.tscn")
@@ -39,13 +40,15 @@ func _ready() -> void:
 	$MarginContainer/HBoxContainer/ToolBar/StopDialogueButton.connect("pressed", self, "_on_stop_dialogue_button_pressed")
 	
 	# Filesystem
+	if OS.get_name() == WEB_OS_NAME:
+		show_save_button()
 	$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveButton.connect("pressed", self, "_on_save_button_pressed")
-	if OS.get_name() != "HTML5":
+	if OS.get_name() != WEB_OS_NAME:
 		$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveAsButton.connect("pressed", self, "_on_save_as_button_pressed")
 	else:
 		$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveAsButton.queue_free()
 	
-	if OS.get_name() != "HTML5":
+	if OS.get_name() != WEB_OS_NAME:
 		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/AppendButton.connect("pressed", self, "_on_append_button_pressed")
 		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/LoadButton.connect("pressed", self, "_on_load_button_pressed")
 	else:
@@ -59,7 +62,7 @@ func _ready() -> void:
 	$MarginContainer/HBoxContainer/ToolBar/ClearButton.connect("pressed", self, "_on_clear_button_pressed")
 	
 	# Quit
-	if OS.get_name() != "HTML5":
+	if OS.get_name() != WEB_OS_NAME:
 		$MarginContainer/HBoxContainer/ToolBar/QuitButton.connect("pressed", self, "_on_quit_button_pressed")
 	else:
 		$MarginContainer/HBoxContainer/ToolBar/QuitButton.queue_free()
@@ -80,7 +83,7 @@ func _input(event: InputEvent) -> void:
 			get_tree().set_input_as_handled()
 		
 		# Save
-		if Input.is_action_just_pressed("s"):
+		if(Input.is_action_just_pressed("s") and OS.get_name() != WEB_OS_NAME):
 			if get_node_or_null("SaveFilePicker"):
 				return
 			
@@ -128,7 +131,7 @@ func _on_stop_dialogue_button_pressed() -> void:
 func _on_save_button_pressed() -> void:
 	var result: Dictionary = _create_dictionary_from_graphs()
 	
-	if OS.get_name() != "HTML5":
+	if OS.get_name() != WEB_OS_NAME:
 		var save_file: File = File.new()
 		save_file.open(session_saved_project_path, File.WRITE)
 		
@@ -139,12 +142,6 @@ func _on_save_button_pressed() -> void:
 		save_confirmation.dialog_text = "File saved at " + session_saved_project_path
 		add_child(save_confirmation)
 	else:
-		var save_file: File = File.new()
-		save_file.open("res://" + result["name"] + ".json", File.WRITE)
-		
-		save_file.store_line(to_json(result))
-		save_file.close()
-		
 		var js_snippet = """
 			var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent('%s');
 			var downloadAnchorNode = document.createElement('a');
@@ -441,7 +438,8 @@ func _clear() -> void:
 				e_child.queue_free()
 		session_saved_project = {}
 		session_saved_project_path = ""
-		hide_save_button()
+		if OS.get_name() != WEB_OS_NAME:
+			hide_save_button()
 
 ###############################################################################
 # Public functions                                                            #
