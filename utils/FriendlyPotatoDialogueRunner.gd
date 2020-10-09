@@ -74,9 +74,9 @@ var should_end: bool = false
 # Builtin functions                                                           #
 ###############################################################################
 
-func _init(path: String, initial_variable_state: Dictionary = {}, functions_to_bind: Dictionary = {}) -> void:
+func _init(data: Dictionary, initial_variable_state: Dictionary = {}, functions_to_bind: Dictionary = {}) -> void:
 	"""
-	path: The path to the dialogue file in JSON format
+	data: The contents of the dialogue file in JSON format
 	initial_variable_state: The initial variable state of the dialogue. The variables must
 	pre-defined in the dialogue.
 	{
@@ -88,14 +88,10 @@ func _init(path: String, initial_variable_state: Dictionary = {}, functions_to_b
 		<function_name>: <node_ref>
 	}
 	"""
-	var dialogue_file: File = File.new()
-	dialogue_file.open(path, File.READ)
-	self.dialogue_data = parse_json(dialogue_file.get_as_text())
-	dialogue_file.close()
+	self.dialogue_data = data
 
 	if typeof(dialogue_data) != TYPE_DICTIONARY:
 		printerr("Invalid dialogue file loaded. Exiting.")
-		get_tree().quit()
 
 	# Set the next active dialogue node
 	next_dialogue_node = dialogue_data.initial_dialogue_node
@@ -145,7 +141,6 @@ func _parse_choices(dialogue_node: Dictionary) -> void:
 							conditional_count -= 1
 					_:
 						printerr("Invalid operator type for choice conditional: " + conditional_variable.operator)
-						get_tree().quit()
 			if conditional_count == 0:
 				current_choices.append(choice)
 		else:

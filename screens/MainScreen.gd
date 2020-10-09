@@ -9,12 +9,18 @@ const VARIABLE_TYPES = {
 const NODE_SPACING: Vector2 = Vector2(300, 545)
 const MAX_SPAWN_ROW_COUNT: int = 9
 
-var dialogue_node: Resource = preload("res://entities/DialogueNode.tscn")
-var global_variable: Resource = preload("res://entities/GlobalVariable.tscn")
+var DialogueNode: Resource = preload("res://entities/DialogueNode.tscn")
+var GlobalVariable: Resource = preload("res://entities/GlobalVariable.tscn")
+var DialogueScreen: Resource = preload("res://screens/DialogueScreen.tscn")
 
-var save_file_picker: Resource = preload("res://entities/SaveFilePicker.tscn")
-var load_file_picker: Resource = preload("res://entities/LoadFilePicker.tscn")
+var SaveFilePicker: Resource = preload("res://entities/SaveFilePicker.tscn")
+var SaveConfirmation: Resource = preload("res://entities/SaveConfirmation.tscn")
+var LoadFilePicker: Resource = preload("res://entities/LoadFilePicker.tscn")
 
+var session_saved_project: Dictionary
+var session_saved_project_path: String
+
+onready var editor_container: Control = $MarginContainer/HBoxContainer/EditorContainer
 onready var editor: GraphEdit = $MarginContainer/HBoxContainer/EditorContainer/GraphEdit
 
 ###############################################################################
@@ -28,8 +34,17 @@ func _ready() -> void:
 	# Add node by button
 	$MarginContainer/HBoxContainer/ToolBar/AddNodeButton.connect("pressed", self, "_on_add_node_button_pressed")
 	
+	# Run dialogue in editor
+	$MarginContainer/HBoxContainer/ToolBar/RunDialogueButton.connect("pressed", self, "_on_run_dialogue_button_pressed")
+	$MarginContainer/HBoxContainer/ToolBar/StopDialogueButton.connect("pressed", self, "_on_stop_dialogue_button_pressed")
+	
 	# Filesystem
-	$MarginContainer/HBoxContainer/ToolBar/SaveButton.connect("pressed", self, "_on_save_button_pressed")
+	$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveButton.connect("pressed", self, "_on_save_button_pressed")
+	if OS.get_name() != "HTML5":
+		$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveAsButton.connect("pressed", self, "_on_save_as_button_pressed")
+	else:
+		$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveAsButton.queue_free()
+	
 	if OS.get_name() != "HTML5":
 		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/AppendButton.connect("pressed", self, "_on_append_button_pressed")
 		$MarginContainer/HBoxContainer/ToolBar/LoadButtonContainer/LoadButton.connect("pressed", self, "_on_load_button_pressed")
@@ -53,7 +68,7 @@ func _input(event: InputEvent) -> void:
 	if Input.is_action_pressed("control"):
 		# Add new node
 		if Input.is_action_just_pressed("enter"):
-			var dialogue_node_instance: GraphNode = dialogue_node.instance()
+			var dialogue_node_instance: GraphNode = DialogueNode.instance()
 			editor.add_child(dialogue_node_instance)
 		
 		# Zoom editor
@@ -63,6 +78,16 @@ func _input(event: InputEvent) -> void:
 		elif event.is_action_pressed("zoom_out"):
 			editor.zoom -= 0.1
 			get_tree().set_input_as_handled()
+		
+		# Save
+		if Input.is_action_just_pressed("s"):
+			if get_node_or_null("SaveFilePicker"):
+				return
+			
+			if session_saved_project_path:
+				_on_save_button_pressed()
+			else:
+				_on_save_as_button_pressed()
 
 ###############################################################################
 # Connections                                                                 #
@@ -72,17 +97,47 @@ func _on_files_dropped(files: PoolStringArray, screen: int) -> void:
 	_load_from_drag_and_drop(files[0])
 
 func _on_add_node_button_pressed() -> void:
-	var dialogue_node_instance: GraphNode = dialogue_node.instance()
+	var dialogue_node_instance: GraphNode = DialogueNode.instance()
 	editor.add_child(dialogue_node_instance)
 
+func _on_run_dialogue_button_pressed() -> void:
+	var dialogue_data = _create_dictionary_from_graphs()
+	if dialogue_data["dialogue"].empty():
+		return
+	if get_node_or_null("MarginContainer/HBoxContainer/EditorContainer/DialogueScreen"):
+		return
+	
+	$MarginContainer/HBoxContainer/ToolBar/StopDialogueButton.visible = true
+	editor.pause_mode = Node.PAUSE_MODE_STOP
+	
+	var dialogue_screen = DialogueScreen.instance()
+	dialogue_screen.dialogue_data = dialogue_data
+	
+	editor_container.add_child(dialogue_screen)
+	
+	yield(dialogue_screen, "tree_exited")
+	
+	editor.pause_mode = Node.PAUSE_MODE_INHERIT
+	$MarginContainer/HBoxContainer/ToolBar/StopDialogueButton.visible = false
+
+func _on_stop_dialogue_button_pressed() -> void:
+	if editor_container.get_node_or_null("DialogueScreen"):
+		editor_container.get_node("DialogueScreen").queue_free()
+		editor.pause_mode = Node.PAUSE_MODE_INHERIT
+
 func _on_save_button_pressed() -> void:
-	var result: Dictionary = _parse_global_options()
-	result["dialogue"] = _parse_dialogue_nodes()
+	var result: Dictionary = _create_dictionary_from_graphs()
 	
 	if OS.get_name() != "HTML5":
-		var save_file_picker_instance: FileDialog = save_file_picker.instance()
-		save_file_picker_instance.save_data = result
-		add_child(save_file_picker_instance)
+		var save_file: File = File.new()
+		save_file.open(session_saved_project_path, File.WRITE)
+		
+		save_file.store_line(to_json(result))
+		save_file.close()
+		
+		var save_confirmation: AcceptDialog = SaveConfirmation.instance()
+		save_confirmation.dialog_text = "File saved at " + session_saved_project_path
+		add_child(save_confirmation)
 	else:
 		var save_file: File = File.new()
 		save_file.open("res://" + result["name"] + ".json", File.WRITE)
@@ -102,6 +157,15 @@ func _on_save_button_pressed() -> void:
 		
 		JavaScript.eval(js_snippet)
 
+func _on_save_as_button_pressed() -> void:
+	var result: Dictionary = _create_dictionary_from_graphs()
+	
+	session_saved_project = result
+	
+	var save_file_picker: FileDialog = SaveFilePicker.instance()
+	save_file_picker.save_data = result
+	add_child(save_file_picker)
+
 func _on_load_button_pressed() -> void:
 	_clear()
 	_load_file()
@@ -110,7 +174,7 @@ func _on_append_button_pressed() -> void:
 	_load_file()
 
 func _on_add_variable_button_pressed() -> void:
-	var global_variable_instance: VBoxContainer = global_variable.instance()
+	var global_variable_instance: VBoxContainer = GlobalVariable.instance()
 	$MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.add_child(global_variable_instance)
 
 func _on_clear_button_pressed() -> void:
@@ -123,6 +187,12 @@ func _on_quit_button_pressed() -> void:
 ###############################################################################
 # Private functions                                                           #
 ###############################################################################
+
+func _create_dictionary_from_graphs() -> Dictionary:
+	var result: Dictionary = _parse_global_options()
+	result["dialogue"] = _parse_dialogue_nodes()
+	
+	return result
 
 func _parse_global_options() -> Dictionary:
 	"""
@@ -236,7 +306,7 @@ func _load_global_options(options: Dictionary) -> void:
 	$MarginContainer/HBoxContainer/ToolBar/InitialNodeContainer/LineEdit.text = options["initial_dialogue_node"]
 	
 	for v_key in options["variables"].keys():
-		var global_variable_instance = global_variable.instance()
+		var global_variable_instance = GlobalVariable.instance()
 		global_variable_instance.get_node("Name/LineEdit").text = v_key
 		global_variable_instance.get_node("Type/LineEdit").text = options["variables"][v_key]["type"]
 		global_variable_instance.get_node("Value/LineEdit").text = options["variables"][v_key]["value"]
@@ -247,7 +317,7 @@ func _load_dialogue_nodes(node_dictionary: Dictionary) -> void:
 	var current_spawn_position: Vector2 = Vector2.ZERO
 	var current_row_count: int = 0
 	for n_key in node_dictionary.keys():
-		var d_instance = dialogue_node.instance()
+		var d_instance = DialogueNode.instance()
 		d_instance.name = n_key
 		d_instance.get_node("Name/LineEdit").text = n_key
 		d_instance.get_node("Text/TextEdit").text = node_dictionary[n_key]["node_text"]
@@ -337,13 +407,13 @@ func _get_type_of_variable(value) -> String:
 			return VARIABLE_TYPES.STRING
 
 func _load_file() -> void:
-	var load_file_picker_instance: FileDialog = load_file_picker.instance()
-	add_child(load_file_picker_instance)
+	var load_file_picker: FileDialog = LoadFilePicker.instance()
+	add_child(load_file_picker)
 	
-	yield(load_file_picker_instance,"file_selected")
+	yield(load_file_picker,"file_selected")
 	
-	var save_data: Dictionary = load_file_picker_instance.save_data
-	load_file_picker_instance.queue_free()
+	var save_data: Dictionary = load_file_picker.save_data
+	load_file_picker.queue_free()
 	
 	_load_global_options(save_data)
 	_load_dialogue_nodes(save_data["dialogue"])
@@ -360,14 +430,25 @@ func _load_from_drag_and_drop(path: String) -> void:
 	_load_dialogue_nodes(save_data["dialogue"])
 
 func _clear() -> void:
-	for v_child in $MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.get_children():
-		v_child.queue_free()
-	for e_child in editor.get_children():
-		if e_child is GraphNode:
-			e_child.queue_free()
+	if editor_container.get_node_or_null("DialogueScreen"):
+		editor_container.get_node("DialogueScreen").queue_free()
+		editor.pause_mode = Node.PAUSE_MODE_INHERIT
+	else:
+		for v_child in $MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.get_children():
+			v_child.queue_free()
+		for e_child in editor.get_children():
+			if e_child is GraphNode:
+				e_child.queue_free()
+		session_saved_project = {}
+		session_saved_project_path = ""
+		hide_save_button()
 
 ###############################################################################
 # Public functions                                                            #
 ###############################################################################
 
+func show_save_button() -> void:
+	$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveButton.visible = true
 
+func hide_save_button() -> void:
+	$MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer/SaveButton.visible = false

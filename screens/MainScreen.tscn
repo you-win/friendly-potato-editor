@@ -88,26 +88,33 @@ margin_right = 137.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 
-[node name="AddNodeButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar"]
+[node name="HSeparator3" type="HSeparator" parent="MarginContainer/HBoxContainer/ToolBar"]
 margin_top = 56.0
 margin_right = 137.0
-margin_bottom = 76.0
-text = "Add Node"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_bottom = 60.0
 
-[node name="SaveButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 80.0
+[node name="SaveButtonContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 64.0
 margin_right = 137.0
-margin_bottom = 100.0
+margin_bottom = 84.0
+
+[node name="SaveButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer"]
+visible = false
+margin_right = 66.0
+margin_bottom = 20.0
 size_flags_horizontal = 3
 text = "Save"
 
-[node name="LoadButtonContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 104.0
+[node name="SaveAsButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar/SaveButtonContainer"]
 margin_right = 137.0
-margin_bottom = 124.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Save As"
+
+[node name="LoadButtonContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 88.0
+margin_right = 137.0
+margin_bottom = 108.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -125,10 +132,44 @@ margin_bottom = 20.0
 size_flags_horizontal = 3
 text = "Load"
 
-[node name="AddVariableButton" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 128.0
+[node name="HSeparator4" type="HSeparator" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 112.0
+margin_right = 137.0
+margin_bottom = 116.0
+
+[node name="RunDialogueButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 120.0
+margin_right = 137.0
+margin_bottom = 140.0
+size_flags_horizontal = 3
+text = "Run Dialogue"
+
+[node name="StopDialogueButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar"]
+visible = false
+margin_top = 144.0
+margin_right = 137.0
+margin_bottom = 164.0
+size_flags_horizontal = 3
+text = "Stop Dialogue"
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 144.0
 margin_right = 137.0
 margin_bottom = 148.0
+
+[node name="AddNodeButton" type="Button" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 152.0
+margin_right = 137.0
+margin_bottom = 172.0
+text = "Add Node"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddVariableButton" type="HBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
+margin_top = 176.0
+margin_right = 137.0
+margin_bottom = 196.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -150,14 +191,14 @@ size_flags_horizontal = 3
 text = "Add"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer/ToolBar"]
-margin_top = 152.0
+margin_top = 200.0
 margin_right = 137.0
 margin_bottom = 824.0
 size_flags_vertical = 3
 
 [node name="VariablesContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ToolBar/ScrollContainer"]
 margin_right = 137.0
-margin_bottom = 672.0
+margin_bottom = 624.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -193,6 +234,7 @@ size_flags_vertical = 3
 [node name="GraphEdit" type="GraphEdit" parent="MarginContainer/HBoxContainer/EditorContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+scroll_offset = Vector2( -10, 0 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
