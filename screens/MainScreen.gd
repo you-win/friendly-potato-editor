@@ -356,7 +356,7 @@ func _create_conditional_variable(var_name: String, variable_dictionary: Diction
 	var conditional_variable = load("res://entities/ConditionalVariable.tscn").instance()
 	conditional_variable.get_node("Name/LineEdit").text = var_name
 	conditional_variable.get_node("Operator/LineEdit").text = variable_dictionary["operator"]
-	conditional_variable.get_node("Value/LineEdit").text = variable_dictionary["value"]
+	conditional_variable.get_node("Value/LineEdit").text = str(variable_dictionary["value"])
 	
 	return conditional_variable
 
@@ -378,7 +378,7 @@ func _create_enter_exit_function(function_name: String, params: Array) -> VBoxCo
 func _create_function_parameter(param_value) -> VBoxContainer:
 	var function_parameter = load("res://entities/FunctionParameter.tscn").instance()
 	function_parameter.get_node("Type/LineEdit").text = _get_type_of_variable(param_value)
-	function_parameter.get_node("Value/LineEdit").text = param_value
+	function_parameter.get_node("Value/LineEdit").text = str(param_value)
 	
 	return function_parameter
 

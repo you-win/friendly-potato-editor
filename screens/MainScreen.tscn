@@ -234,7 +234,6 @@ size_flags_vertical = 3
 [node name="GraphEdit" type="GraphEdit" parent="MarginContainer/HBoxContainer/EditorContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-scroll_offset = Vector2( -10, 0 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
