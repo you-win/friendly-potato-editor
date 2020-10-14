@@ -143,6 +143,7 @@ size_flags_vertical = 3
 highlight_current_line = true
 show_line_numbers = true
 draw_spaces = true
+wrap_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
 }

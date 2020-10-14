@@ -188,6 +188,7 @@ func _on_quit_button_pressed() -> void:
 func _create_dictionary_from_graphs() -> Dictionary:
 	var result: Dictionary = _parse_global_options()
 	result["dialogue"] = _parse_dialogue_nodes()
+	result["editor_node_layout"] = _parse_editor_node_layout()
 	
 	return result
 
@@ -217,6 +218,18 @@ func _parse_global_options() -> Dictionary:
 	
 	return result
 
+func _parse_editor_node_layout() -> Dictionary:
+	"""
+	Loop through all nodes and store each offset per node name
+	"""
+	var result: Dictionary = {}
+	for n in editor.get_children():
+		if n is GraphNode:
+			# Store graph node editor locations so loading files is less painful
+			result[n.get_node("Name").get_node("LineEdit").text] = [n.offset.x, n.offset.y]
+	
+	return result
+
 func _parse_dialogue_nodes() -> Dictionary:
 	"""
 	Loop through all dialogue nodes and parse all options.
@@ -224,6 +237,8 @@ func _parse_dialogue_nodes() -> Dictionary:
 	print_debug("Parsing dialogue nodes")
 	
 	var result: Dictionary = {}
+	
+	var dialogue_node_locations: Dictionary = {}
 	
 	for n in editor.get_children():
 		if n is GraphNode:
@@ -310,7 +325,7 @@ func _load_global_options(options: Dictionary) -> void:
 		
 		$MarginContainer/HBoxContainer/ToolBar/ScrollContainer/VariablesContainer.add_child(global_variable_instance)
 
-func _load_dialogue_nodes(node_dictionary: Dictionary) -> void:
+func _load_dialogue_nodes(node_dictionary: Dictionary, node_offsets: Dictionary = {}) -> void:
 	var current_spawn_position: Vector2 = Vector2.ZERO
 	var current_row_count: int = 0
 	for n_key in node_dictionary.keys():
@@ -331,9 +346,13 @@ func _load_dialogue_nodes(node_dictionary: Dictionary) -> void:
 			current_spawn_position.x = 0
 			current_row_count = 0
 		
-		d_instance.offset = current_spawn_position
-		current_spawn_position.x += NODE_SPACING.x
-		current_row_count += 1
+		if d_instance.name in node_offsets:
+			d_instance.offset.x = node_offsets[d_instance.name][0]
+			d_instance.offset.y = node_offsets[d_instance.name][1]
+		else:
+			d_instance.offset = current_spawn_position
+			current_spawn_position.x += NODE_SPACING.x
+			current_row_count += 1
 		
 		editor.add_child(d_instance)
 
@@ -413,7 +432,10 @@ func _load_file() -> void:
 	load_file_picker.queue_free()
 	
 	_load_global_options(save_data)
-	_load_dialogue_nodes(save_data["dialogue"])
+	if save_data.has("editor_node_layout"):
+		_load_dialogue_nodes(save_data["dialogue"], save_data["editor_node_layout"])
+	else:
+		_load_dialogue_nodes(save_data["dialogue"])
 
 func _load_from_drag_and_drop(path: String) -> void:
 	var save_file: File = File.new()
@@ -424,7 +446,10 @@ func _load_from_drag_and_drop(path: String) -> void:
 	save_file.close()
 	
 	_load_global_options(save_data)
-	_load_dialogue_nodes(save_data["dialogue"])
+	if save_data.has("editor_node_layout"):
+		_load_dialogue_nodes(save_data["dialogue"], save_data["editor_node_layout"])
+	else:
+		_load_dialogue_nodes(save_data["dialogue"])
 
 func _clear() -> void:
 	if editor_container.get_node_or_null("DialogueScreen"):
